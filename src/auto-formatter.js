@@ -34,11 +34,11 @@ function unFormat(value, separatorPattern) {
   return value.replace(separatorPattern, '');
 }
 
-function formatter(separator, separatorIndex, separatorPattern, e) {
-  var caretIndex = this.selectionStart;
-  var lastCharTyped = this.value.charAt(caretIndex - 1);
+function formatter(targetNode, separator, separatorIndex, separatorPattern, maxLength, e) {
+  var caretIndex = targetNode.selectionStart;
+  var lastCharTyped = targetNode.value.charAt(caretIndex - 1);
   var lastCharTypedIsSeparator = separator.indexOf(lastCharTyped) !== -1 ? 1 : 0;
-  var expectedValueArray = unFormat(this.value, separatorPattern).split('');
+  var expectedValueArray = unFormat(targetNode.value, separatorPattern).split('');
   if(lastCharTypedIsSeparator) {
     caretIndex -= 1;
   }
@@ -69,7 +69,7 @@ function formatter(separator, separatorIndex, separatorPattern, e) {
          * the caret index needs to be updated accordingly, after the formatting
          * which must take, the separator added, in to consideration
          */
-        if(caretIndex >= this.value.length) {
+        if(caretIndex >= targetNode.value.length) {
           caretIndex += 1;
         }
 
@@ -79,18 +79,21 @@ function formatter(separator, separatorIndex, separatorPattern, e) {
       }
     }
 
-    //this.value = result.value.substr(0, formatLength);
-
-    this.value = expectedValueArray.join('');
+    if (this && this.hasMaxLength) {
+      targetNode.value = expectedValueArray.slice(0, maxLength).join('');
+    } else {
+      targetNode.value = expectedValueArray.join('');
+    }
     if (e.type) {
-        this.selectionStart = caretIndex;
-        this.selectionEnd = caretIndex;
+        targetNode.selectionStart = caretIndex;
+        targetNode.selectionEnd = caretIndex;
     }
   }
 }
 
-var AutoFormatter = function(targetNode) {
+var AutoFormatter = function(targetNode, hasMaxLength) {
   this.targetNode = targetNode;
+  this.hasMaxLength = hasMaxLength;
 };
 
 AutoFormatter.prototype.disableFormatting = function() {
@@ -132,12 +135,14 @@ AutoFormatter.prototype.enableFormatting = function(e) {
     this.separatorIndex = separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
     this.separatorPattern = separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
 
-    //targetNode.setAttribute('maxLength', format.length);
+    if (this.hasMaxLength) {
+      targetNode.setAttribute('maxlength', format.length);
+    }
 
-    this.formatter = formatter.bind(targetNode, separator, separatorIndex, separatorPattern);
+    this.formatter = formatter.bind(this, targetNode, separator, separatorIndex, separatorPattern, format.length);
     targetNode.addEventListener('keyup', this.formatter);
     if(value !== '') {
-      formatter.call(targetNode, separator, separatorIndex, separatorPattern, e || {});
+      formatter(targetNode, separator, separatorIndex, separatorPattern, format.length, e || {});
     }
   } else {
     targetNode.value = value.replace(separatorPattern, '');

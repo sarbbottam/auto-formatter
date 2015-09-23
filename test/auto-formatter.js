@@ -120,6 +120,25 @@ describe('AutoFormatter', function() {
       assert.equal(inputNode.selectionStart, 6);
     });
 
+    it('should add maxlength attribute to the input node if hasMaxLength is passed as true', function() {
+      autoFormatter.disableFormatting();
+      inputNode.setAttribute('data-format', 'XXXXX-XXXXX');
+      inputNode.value = '12345678901234567890';
+      autoFormatter = new AutoFormatter(inputNode, true);
+      autoFormatter.enableFormatting();
+      assert.equal(inputNode.getAttribute('maxlength'), '11');
+    });
+
+    it('should limit the maximum character to the format length', function() {
+      autoFormatter.disableFormatting();
+      inputNode.setAttribute('data-format', '(XXX) XXX-XXXX');
+      inputNode.value = '12345678901234567890';
+      autoFormatter = new AutoFormatter(inputNode, true);
+      autoFormatter.enableFormatting();
+      event.triggerKeyupEvent(inputNode, 48);
+      assert.equal(inputNode.value, '(123) 456-7890');
+    });
+
   });
 
 });
