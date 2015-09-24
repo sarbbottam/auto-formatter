@@ -17,6 +17,8 @@ var phoneNumberFormatter;
 
 phoneNumberFormatter = new AutoFormatter(document.querySelector('#phone-number'), true);
 phoneNumberFormatter.enableFormatting();
+
+AutoFormatter.format('1234567890', 'XXXXX-XXXXX'); // 12345-67890
 </script>
 ```
 
@@ -47,6 +49,12 @@ targetNodeFormatter.enableFormatting();
  * format as you type will be disabled on this node
  */
 targetNodeFormatter.disableFormatting();
+
+/*
+ * format a value
+ * as per the desired format
+ */
+AutoFormatter.format(value, format, [hasMaxLength])
 ```
 
 ---

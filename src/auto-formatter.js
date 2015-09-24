@@ -57,7 +57,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
     for( var i = 0, l = separatorIndex.length; i < l; i += 1 ) {
       if(expectedValueArray.length >= separatorIndex[i]) {
         expectedValueArray.splice(separatorIndex[i], 0, separator[i]);
-          if (lastCharTypedIsSeparator) {
+        if (lastCharTypedIsSeparator) {
           continue;
         }
         /*
@@ -146,6 +146,38 @@ AutoFormatter.prototype.enableFormatting = function(e) {
     }
   } else {
     targetNode.value = value.replace(separatorPattern, '');
+  }
+};
+
+AutoFormatter.format = function(value, format, hasMaxLength) {
+  var separator;
+  var separatorIndex;
+  var separatorPattern;
+  var expectedValueArray;
+
+  if (!value) {
+    return value;
+  }
+
+  if (!format) {
+    return value;
+  }
+
+  separator = format.match(/[^X]/g);
+  separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
+  separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
+
+  expectedValueArray = unFormat(value, separatorPattern).split('');
+
+  for( var i = 0, l = separatorIndex.length; i < l; i += 1 ) {
+    if(expectedValueArray.length >= separatorIndex[i]) {
+      expectedValueArray.splice(separatorIndex[i], 0, separator[i]);
+    }
+  }
+  if (hasMaxLength) {
+    return expectedValueArray.slice(0, format.length).join('');
+  } else {
+    return expectedValueArray.join('');
   }
 };
 
