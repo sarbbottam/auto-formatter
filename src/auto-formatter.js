@@ -109,11 +109,15 @@ AutoFormatter.prototype.disableFormatting = function() {
     this.targetNode.removeEventListener('keyup', this.formatter);
   }
 
-  document.dispatchEvent(new CustomEvent('cleared-formatting', {
-    'detail': {
-      targetNode: this.targetNode
-    }
-  }));
+  /*
+   * Is the commented code required?
+   * IE does not support CustomEvent constructor
+   */
+  // document.dispatchEvent(new CustomEvent('cleared-formatting', {
+  //   'detail': {
+  //     targetNode: this.targetNode
+  //   }
+  // }));
 };
 
 AutoFormatter.prototype.enableFormatting = function(e) {
