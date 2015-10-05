@@ -122,7 +122,7 @@ AutoFormatter.prototype.disableFormatting = function() {
 
 AutoFormatter.prototype.enableFormatting = function(e) {
   var targetNode = this.targetNode;
-  var value = targetNode.value;
+  var value;
   var format = targetNode.getAttribute('data-format');
   var separator;
   var separatorIndex;
@@ -131,6 +131,8 @@ AutoFormatter.prototype.enableFormatting = function(e) {
   if (this.formatter || this.separatorPattern) {
     this.disableFormatting();
   }
+
+  value = targetNode.value;
 
   this.format = format = format === null ? '' : format;
 
@@ -148,8 +150,6 @@ AutoFormatter.prototype.enableFormatting = function(e) {
     if(value !== '') {
       formatter(targetNode, separator, separatorIndex, separatorPattern, format.length, e || {});
     }
-  } else {
-    targetNode.value = value.replace(separatorPattern, '');
   }
 };
 
