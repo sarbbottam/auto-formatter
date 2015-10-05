@@ -14,6 +14,8 @@ Format as you type.
 * credit card number ```XXXX XXXX XXXX XXXX, XXXX XXXXXX XXXXX```
 * date ```DD/MM/YYYY, MM/DD/YYYY, YYYY/MM/DD```
 
+![animated demo](http://i.imgur.com/IR7veRM.gif)
+
 ## Usage:
 
 ```html
