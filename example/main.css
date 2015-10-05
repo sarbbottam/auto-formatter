@@ -164,6 +164,7 @@ textarea{
  * https://css-tricks.com/fighting-the-space-between-inline-block-elements/
  */
 .row{
+  margin-top: 16px;
   font-size:0;
   display:-webkit-flex;
   display:-ms-flexbox;
@@ -783,4 +784,23 @@ textarea{
 .modal-body,
 .modal-footer {
   margin-top: 10px;
+}
+
+.call-out {
+  position: relative;
+  background-color: #198fff;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 4px;
+  color: white;
+  font-weight: 500;
+}
+
+.call-out:before {
+  content: '';
+  position: absolute;
+  border: 10px solid transparent;
+  border-bottom: 70px solid #198fff;
+  top: -80px;
+  right: 20px;
 }

@@ -15,7 +15,16 @@
       </div>
       <div class="row">
         <div class="col col-1-3 col-md-1-3 col-sm-1-3">
+          <select class="drop-down" id="country-code" data-corresponding-node-id="phone-number">
+            <option value="880"> Bangladesh (+880) </option>
+            <option data-format="X XX XX XX XX" value="33"> France (+33) </option>
+            <option data-format="XXXXX-XXXXX" value="91"> India (+91) </option>
+            <option data-format="(XXX) XXX-XXXX" value="1" selected> United States (+1) </option>
+          </select>
           <input type="text" id="phone-number" class="input-field" placeholder="(XXX) XXX-XXXX" data-format="(XXX) XXX-XXXX">
+          <p class="call-out">
+            Choose a different country code to update the format.
+          </p>
         </div>
       </div>
       <div class="row">
