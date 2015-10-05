@@ -79,7 +79,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
       }
     }
 
-    if (this && this.hasMaxLength) {
+    if (this.hasMaxLength) {
       targetNode.value = expectedValueArray.slice(0, maxLength).join('');
     } else {
       targetNode.value = expectedValueArray.join('');
@@ -148,7 +148,7 @@ AutoFormatter.prototype.enableFormatting = function(e) {
     this.formatter = formatter.bind(this, targetNode, separator, separatorIndex, separatorPattern, format.length);
     targetNode.addEventListener('keyup', this.formatter);
     if(value !== '') {
-      formatter(targetNode, separator, separatorIndex, separatorPattern, format.length, e || {});
+      formatter.bind(this)(targetNode, separator, separatorIndex, separatorPattern, format.length, e || {});
     }
   }
 };
