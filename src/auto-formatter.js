@@ -39,9 +39,6 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
   var lastCharTyped = targetNode.value.charAt(caretIndex - 1);
   var lastCharTypedIsSeparator = separator.indexOf(lastCharTyped) !== -1 ? 1 : 0;
   var expectedValueArray = unFormat(targetNode.value, separatorPattern).split('');
-  if(lastCharTypedIsSeparator) {
-    caretIndex -= 1;
-  }
 
   /*
    * no format
