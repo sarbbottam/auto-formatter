@@ -128,7 +128,7 @@ describe('AutoFormatter', function() {
         assert.equal(inputNode.selectionStart, 6);
       });
 
-      it('should add maxlength attribute to the input node if hasMaxLength is passed as true', function() {
+      it('should add maxlength attribute to the input node if limitToMaxLength is passed as true', function() {
         autoFormatter.disableFormatting();
         inputNode.setAttribute('data-format', 'XXXXX-XXXXX');
         inputNode.value = '12345678901234567890';

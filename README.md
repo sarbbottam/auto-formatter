@@ -38,12 +38,12 @@ AutoFormatter.format('1234567890', 'XXXXX-XXXXX'); // 12345-67890
 ```js
 /*
  * create an instance of autoformatter
- * by passing the targetNode and optional hasMaxLength (true|false) flag
- * if hasMaxLength === true is passed, the `maxlength` attribute,
+ * by passing the targetNode and optional limitToMaxLength (true|false) flag
+ * if limitToMaxLength === true is passed, the `maxlength` attribute,
  * with `length of the format` will be added to the targetNode
  * and formatted value will be trimmed to `length of the format`
  */
-targetNodeFormatter = new AutoFormatter(targetNode, [hasMaxLength])
+targetNodeFormatter = new AutoFormatter(targetNode, [limitToMaxLength])
 
 /*
  * enable formatting on the targetNode
@@ -63,7 +63,7 @@ targetNodeFormatter.disableFormatting();
  * format a value
  * as per the desired format
  */
-AutoFormatter.format(value, format, [hasMaxLength])
+AutoFormatter.format(value, format, [limitToMaxLength])
 ```
 
 ---

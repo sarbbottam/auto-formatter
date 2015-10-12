@@ -76,7 +76,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
       }
     }
 
-    if (this.hasMaxLength) {
+    if (this.limitToMaxLength) {
       targetNode.value = expectedValueArray.slice(0, maxLength).join('');
     } else {
       targetNode.value = expectedValueArray.join('');
@@ -88,9 +88,9 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
   }
 }
 
-var AutoFormatter = function(targetNode, hasMaxLength) {
+var AutoFormatter = function(targetNode, limitToMaxLength) {
   this.targetNode = targetNode;
-  this.hasMaxLength = hasMaxLength;
+  this.limitToMaxLength = limitToMaxLength;
 };
 
 AutoFormatter.prototype.disableFormatting = function() {
@@ -129,7 +129,7 @@ AutoFormatter.prototype.enableFormatting = function(e) {
     this.separatorIndex = separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
     this.separatorPattern = separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
 
-    if (this.hasMaxLength) {
+    if (this.limitToMaxLength) {
       targetNode.setAttribute('maxlength', format.length);
     }
 
@@ -141,7 +141,7 @@ AutoFormatter.prototype.enableFormatting = function(e) {
   }
 };
 
-AutoFormatter.format = function(value, format, hasMaxLength) {
+AutoFormatter.format = function(value, format, limitToMaxLength) {
   var separator;
   var separatorIndex;
   var separatorPattern;
@@ -166,7 +166,7 @@ AutoFormatter.format = function(value, format, hasMaxLength) {
       expectedValueArray.splice(separatorIndex[i], 0, separator[i]);
     }
   }
-  if (hasMaxLength) {
+  if (limitToMaxLength) {
     return expectedValueArray.slice(0, format.length).join('');
   } else {
     return expectedValueArray.join('');
