@@ -149,11 +149,11 @@ function formatter(e) {
   }
 }
 
-var AutoFormatter = function(targetNode, limitToMaxLength, recurringPattern, direction) {
-  this.targetNode = targetNode;
-  this.limitToMaxLength = limitToMaxLength;
-  this.recurringPattern = recurringPattern && !limitToMaxLength;
-  this.direction = direction;
+var AutoFormatter = function(config) {
+  this.targetNode = config.targetNode;
+  this.limitToMaxLength = config.limitToMaxLength;
+  this.recurringPattern = config.recurringPattern && !this.limitToMaxLength;
+  this.direction = config.direction;
 };
 
 AutoFormatter.prototype.disableFormatting = function() {
@@ -227,7 +227,13 @@ AutoFormatter.prototype.enableFormatting = function(e) {
  * it does not worry about the complex auto formatting logic
  * and caretIndex.
  */
-AutoFormatter.format = function(value, format, limitToMaxLength, recurringPattern, direction) {
+AutoFormatter.format = function(config) {
+  var value = config.value;
+  var format = config.format;
+  var limitToMaxLength = config.limitToMaxLength;
+  var recurringPattern = config.recurringPattern;
+  var direction = config.direction;
+
   var separator;
   var separatorIndex;
   var separatorPattern;

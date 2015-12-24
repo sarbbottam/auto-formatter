@@ -24,10 +24,16 @@ Format as you type.
 <script>
 var phoneNumberFormatter;
 
-phoneNumberFormatter = new AutoFormatter(document.querySelector('#phone-number'), true);
+phoneNumberFormatter = new AutoFormatter({
+  targetNode: document.querySelector('#phone-number'),
+  limitToMaxLength: true
+});
 phoneNumberFormatter.enableFormatting();
 
-AutoFormatter.format('1234567890', 'XXXXX-XXXXX'); // 12345-67890
+AutoFormatter.format({
+  value: '1234567890',
+  format: 'XXXXX-XXXXX'
+}); // 12345-67890
 </script>
 ```
 
@@ -44,7 +50,12 @@ AutoFormatter.format('1234567890', 'XXXXX-XXXXX'); // 12345-67890
  * and formatted value will be trimmed to `length of the format`
  * if limitToMaxLength is passed as true, recurringPattern will not have any effect
  */
-targetNodeFormatter = new AutoFormatter(targetNode, [limitToMaxLength, recurringPattern])
+targetNodeFormatter = new AutoFormatter({
+  targetNode: targetNode, // DOM Node
+  limitToMaxLength: limitToMaxLength, // optional - true | false
+  recurringPattern: recurringPattern, // optional - true | false
+  direction: direction // optional - 'ltr' || 'rtl'
+})
 
 /*
  * enable formatting on the targetNode
@@ -65,7 +76,13 @@ targetNodeFormatter.disableFormatting();
  * as per the desired format
  * if limitToMaxLength is passed as true, recurringPattern will not have any effect
  */
-AutoFormatter.format(value, format, [limitToMaxLength, recurringPattern])
+AutoFormatter.format({
+  value: value,
+  format: format,
+  limitToMaxLength: limitToMaxLength, // optional - true | false
+  recurringPattern: recurringPattern, // optional - true | false
+  direction: direction // optional - 'ltr' || 'rtl'
+})
 ```
 
 ---
