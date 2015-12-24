@@ -96,6 +96,11 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
       }
     }
 
+    if (this.recurringPattern &&
+      separator.indexOf(expectedValueArray[expectedValueArray.length - 1]) !== -1) {
+        expectedValueArray.pop();
+    }
+
     if (this.direction === 'rtl') {
       expectedValueArray.reverse();
     }
@@ -224,6 +229,11 @@ AutoFormatter.format = function(value, format, limitToMaxLength, recurringPatter
     if(expectedValueArray.length >= separatorIndex[i]) {
       expectedValueArray.splice(separatorIndex[i], 0, separator[i]);
     }
+  }
+
+  if (recurringPattern &&
+    separator.indexOf(expectedValueArray[expectedValueArray.length - 1]) !== -1) {
+      expectedValueArray.pop();
   }
 
   if (direction === 'rtl') {

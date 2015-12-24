@@ -68,13 +68,6 @@ targetNodeFormatter.disableFormatting();
 AutoFormatter.format(value, format, [limitToMaxLength, recurringPattern])
 ```
 
-Caveats
----
-If recurringPattern is in effect, the seperator will be added as soon as the criteria is met.
-For example, lets consider recurringPattern is enabled for `X-XX`, If the user has typed `12`, it will be formatted as `1-2`.
-The moment user types `3`, it will be `1-23-`. Note the `-` at the end.
-
-
 ---
 
 ## License
