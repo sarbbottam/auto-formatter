@@ -24,6 +24,9 @@ creditCardFormatter.enableFormatting();
 birthdayFormatter = new AutoFormatter(document.getElementById('birthday'), true);
 birthdayFormatter.enableFormatting();
 
+currencyFormatter = new AutoFormatter(document.getElementById('currency'), false, true, 'rtl');
+currencyFormatter.enableFormatting();
+
 /*
  * ToDo
  * add example for recurringPattern
