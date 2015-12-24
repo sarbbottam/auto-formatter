@@ -41,6 +41,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
   var expectedValueArray;
   var lastCharTypedIsSeparator;
 
+
   if (this.recurringPattern) {
     separatorAndSeparatorIndexForRecurringPattern =
       sepatarorUtility.getSeparatorAndSeparatorIndexForRecurringPattern(
@@ -49,11 +50,15 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
     separator = separatorAndSeparatorIndexForRecurringPattern.separator;
     separatorIndex = separatorAndSeparatorIndexForRecurringPattern.separatorIndex;
   }
+
   lastCharTypedIsSeparator = separator.indexOf(lastCharTyped) !== -1 ? 1 : 0;
 
   separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
-  expectedValueArray = unFormat(targetNode.value, separatorPattern).split('');
-
+  if (this.direction === 'rtl') {
+    expectedValueArray = unFormat(targetNode.value.split('').reverse().join(''), separatorPattern).split('');
+  } else {
+    expectedValueArray = unFormat(targetNode.value, separatorPattern).split('');
+  }
   /*
    * no format
    * ---------
@@ -90,11 +95,16 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
       }
     }
 
+    if (this.direction === 'rtl') {
+      expectedValueArray.reverse();
+    }
+
     if (this.limitToMaxLength) {
       targetNode.value = expectedValueArray.slice(0, this.maxLength).join('');
     } else {
       targetNode.value = expectedValueArray.join('');
     }
+
     if (e.type) {
         targetNode.selectionStart = caretIndex;
         targetNode.selectionEnd = caretIndex;
@@ -102,10 +112,11 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
   }
 }
 
-var AutoFormatter = function(targetNode, limitToMaxLength, recurringPattern) {
+var AutoFormatter = function(targetNode, limitToMaxLength, recurringPattern, direction) {
   this.targetNode = targetNode;
   this.limitToMaxLength = limitToMaxLength;
   this.recurringPattern = recurringPattern && !limitToMaxLength;
+  this.direction = direction;
 };
 
 AutoFormatter.prototype.disableFormatting = function() {
@@ -140,7 +151,12 @@ AutoFormatter.prototype.enableFormatting = function(e) {
   this.format = format = format === null ? '' : format;
 
   if (format && format.length) {
-    this.separator = separator = format.match(/[^X]/g);
+    separator = format.match(/[^X]/g);
+    if (this.direction === 'rtl') {
+      separator = separator.reverse();
+      format = format.split('').reverse().join('');
+    }
+    this.separator = separator;
     this.separatorIndex = separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
     this.separatorPattern = separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
 
@@ -153,6 +169,7 @@ AutoFormatter.prototype.enableFormatting = function(e) {
       this.maxLength = false;
     }
 
+
     this.formatter = formatter.bind(this, targetNode, separator, separatorIndex, separatorPattern);
     targetNode.addEventListener('keyup', this.formatter);
     if(value !== '') {
@@ -161,7 +178,7 @@ AutoFormatter.prototype.enableFormatting = function(e) {
   }
 };
 
-AutoFormatter.format = function(value, format, limitToMaxLength, recurringPattern) {
+AutoFormatter.format = function(value, format, limitToMaxLength, recurringPattern, direction) {
   var separator;
   var separatorIndex;
   var separatorPattern;
@@ -178,6 +195,13 @@ AutoFormatter.format = function(value, format, limitToMaxLength, recurringPatter
   }
 
   separator = format.match(/[^X]/g);
+
+  if (direction === 'rtl') {
+    value = value.split('').reverse().join('');
+    separator = separator.reverse();
+    format = format.split('').reverse().join('');
+  }
+
   separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
   if (recurringPattern) {
     separatorAndSeparatorIndexForRecurringPattern =
@@ -196,6 +220,11 @@ AutoFormatter.format = function(value, format, limitToMaxLength, recurringPatter
       expectedValueArray.splice(separatorIndex[i], 0, separator[i]);
     }
   }
+
+  if (direction === 'rtl') {
+    expectedValueArray.reverse();
+  }
+
   if (limitToMaxLength) {
     return expectedValueArray.slice(0, format.length).join('');
   } else {

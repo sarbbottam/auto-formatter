@@ -173,6 +173,24 @@ describe('AutoFormatter', function() {
         assert.equal(inputNode.value, '1-23-45-67-8');
       });
 
+      it('should format in rtl manner, recurringly if desired', function() {
+        autoFormatter.disableFormatting();
+        inputNode.setAttribute('data-format', 'XXX,XXX.XX');
+        inputNode.value = '1234567890';
+        autoFormatter = new AutoFormatter(inputNode, false, true, 'rtl');
+        autoFormatter.enableFormatting();
+        event.triggerKeyupEvent(inputNode, 48);
+        assert.equal(inputNode.value, '12,345,678.90');
+
+        autoFormatter.disableFormatting();
+        inputNode.setAttribute('data-format', 'XXX,XXX.XX');
+        inputNode.value = '123456';
+        autoFormatter = new AutoFormatter(inputNode, false, true, 'rtl');
+        autoFormatter.enableFormatting();
+        event.triggerKeyupEvent(inputNode, 48);
+        assert.equal(inputNode.value, '1,234.56');
+      });
+
     });
   });
 
@@ -209,6 +227,11 @@ describe('AutoFormatter', function() {
       assert.equal(AutoFormatter.format('12345678901234567890', '(XXX) XXX-XXXX', true, true), '(123) 456-7890');
       assert.equal(AutoFormatter.format('12345678901234567890', 'XXXXX-XXXXX', true, true), '12345-67890');
       assert.equal(AutoFormatter.format('123456789', 'X-XX', true, true), '1-23');
+    });
+
+    it('should format in rtl manner, recurringly if desired', function() {
+      assert.equal(AutoFormatter.format('1234567890', 'XXX,XXX.XX', false, true, 'rtl'), '12,345,678.90');
+      assert.equal(AutoFormatter.format('123456', 'XXX,XXX.XX', false, true, 'rtl'), '1,234.56');
     });
 
   });
