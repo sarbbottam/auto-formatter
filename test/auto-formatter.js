@@ -43,7 +43,7 @@ describe('AutoFormatter', function() {
         assert.equal(inputNode.value, '(123) 456-7890');
       });
 
-      it('should format if the keyCode is between 48 & 90 and 96 && 105', function() {
+      it('should format if the keyCode is between 48 & 90 and 96 && 105 or 8 or 46', function() {
         inputNode.value = '1234567890';
         event.triggerKeyupEvent(inputNode, 48);
         assert.equal(inputNode.value, '(123) 456-7890');
@@ -52,9 +52,9 @@ describe('AutoFormatter', function() {
         assert.equal(inputNode.value, '(123) 456-7890');
       });
 
-      it('should not format if the keyCode is not between 48 & 90 and 96 && 105', function() {
+      it('should not format if the keyCode is not between 48 & 90 and 96 && 105 or 8 or 46', function() {
         inputNode.value = '1234567890';
-        event.triggerKeyupEvent(inputNode, 8);
+        event.triggerKeyupEvent(inputNode, 9);
         assert.equal(inputNode.value, '1234567890');
       });
 
@@ -62,7 +62,7 @@ describe('AutoFormatter', function() {
         inputNode.value = '(123) 456-7890';
         inputNode.selectionStart = 10;
         inputNode.selectionEnd = 10;
-        event.triggerKeyupEvent(inputNode, 8);
+        event.triggerKeyupEvent(inputNode, 9);
         assert.equal(inputNode.value, '(123) 456-7890');
       });
 

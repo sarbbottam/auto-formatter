@@ -14,7 +14,7 @@ function isAutoFormatEnabled(e) {
     return true;
   }
 
-  if(keyCode >= 48 && keyCode <= 90 || keyCode >= 96 && keyCode <= 105) {
+  if(keyCode === 8 || keyCode === 46 || keyCode >= 48 && keyCode <= 90 || keyCode >= 96 && keyCode <= 105) {
     return true;
   }
 
@@ -24,7 +24,7 @@ function isAutoFormatEnabled(e) {
 function isModifierKey(e) {
   var keyCode = e.keyCode;
 
-  if(keyCode >= 8 && keyCode <= 46) {
+  if(keyCode >= 9 && keyCode <= 46) {
     return true;
   }
   return false;
