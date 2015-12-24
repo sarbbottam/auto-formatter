@@ -14,6 +14,7 @@ function isAutoFormatEnabled(e) {
     return true;
   }
 
+  // refer http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes for keyCodes
   if(keyCode >= 48 && keyCode <= 90 || keyCode >= 96 && keyCode <= 105) {
     return true;
   }
@@ -24,6 +25,7 @@ function isAutoFormatEnabled(e) {
 function isModifierKey(e) {
   var keyCode = e.keyCode;
 
+  // refer http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes for keyCodes
   if(keyCode >= 8 && keyCode <= 46) {
     return true;
   }
@@ -34,19 +36,31 @@ function unFormat(value, separatorPattern) {
   return value.replace(separatorPattern, '');
 }
 
-function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
+function formatter(e) {
+  var targetNode = this.targetNode;
+  var separator = this.separator;
+  var separatorIndex = this.separatorIndex;
+  var separatorPattern = this.separatorPattern;
   var caretIndexFromStart = targetNode.selectionStart;
   var caretIndexFromEnd = targetNode.value.length - caretIndexFromStart;
   var lastCharTyped = targetNode.value.charAt(caretIndexFromStart - 1);
   var separatorAndSeparatorIndexForRecurringPattern;
   var expectedValueArray;
   var lastCharTypedIsSeparator;
-
-
+  var value = targetNode.value;
+  /*
+   * if recurringPattern, for example
+   * if the entered input value is 1234567890 and the pattern is XX-XX
+   * the value will be formatted as 12-34-56-78-90; the pattern following the last separator
+   * will be used in recurrance
+   * getSeparatorAndSeparatorIndexForRecurringPattern(), will compute the separator and separatorIndex
+   * from the current value, the lenght of the pattern following the last separator, current separator
+   * and current separatorIndex
+   */
   if (this.recurringPattern) {
     separatorAndSeparatorIndexForRecurringPattern =
       sepatarorUtility.getSeparatorAndSeparatorIndexForRecurringPattern(
-        targetNode.value, this.seperatorIndexIncrementValue, separator, separatorIndex
+        value, this.seperatorIndexIncrementValue, separator, separatorIndex
       );
     separator = separatorAndSeparatorIndexForRecurringPattern.separator;
     separatorIndex = separatorAndSeparatorIndexForRecurringPattern.separatorIndex;
@@ -54,11 +68,17 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
 
   lastCharTypedIsSeparator = separator.indexOf(lastCharTyped) !== -1 ? 1 : 0;
 
+  // separatorPattern is used to unformat the formatted value
   separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
+
   if (this.direction === 'rtl') {
-    expectedValueArray = unFormat(targetNode.value.split('').reverse().join(''), separatorPattern).split('');
+    /*
+     * if the formatting direction is 'rtl'; the current value needs to be reversed,
+     * to reuse the same logic that is used for formatting 'ltr' direction.
+     */
+    expectedValueArray = unFormat(value.split('').reverse().join(''), separatorPattern).split('');
   } else {
-    expectedValueArray = unFormat(targetNode.value, separatorPattern).split('');
+    expectedValueArray = unFormat(value, separatorPattern).split('');
   }
   /*
    * no format
@@ -86,7 +106,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
          * the caret index needs to be updated accordingly, after the formatting
          * which must take, the separator added, in to consideration
          */
-        if(caretIndexFromStart >= targetNode.value.length) {
+        if(caretIndexFromStart >= value.length) {
           caretIndexFromStart += 1;
         }
 
@@ -96,21 +116,28 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
       }
     }
 
+    // if recurringPattern, the trailing seperator, if any, is removed
     if (this.recurringPattern &&
       separator.indexOf(expectedValueArray[expectedValueArray.length - 1]) !== -1) {
         expectedValueArray.pop();
     }
 
+    /*
+     * since the value has been reversed for formatting it needs to be re-revesed
+     * before setting it to targetNode
+     */
     if (this.direction === 'rtl') {
       expectedValueArray.reverse();
     }
 
     if (this.limitToMaxLength) {
+      // trim the value to maxLength
       targetNode.value = expectedValueArray.slice(0, this.maxLength).join('');
     } else {
       targetNode.value = expectedValueArray.join('');
     }
 
+    // if the direction is 'rtl' caretIndexFromStart is recalculated
     if (this.direction === 'rtl') {
       caretIndexFromStart = expectedValueArray.length - caretIndexFromEnd;
     }
@@ -150,8 +177,8 @@ AutoFormatter.prototype.enableFormatting = function(e) {
   var format = targetNode.getAttribute('data-format');
   var separator;
   var separatorIndex;
-  var separatorPattern;
 
+  // prior attaching the event listener for auto formatting, remove any, if exists.
   if (this.formatter || this.separatorPattern) {
     this.disableFormatting();
   }
@@ -160,16 +187,22 @@ AutoFormatter.prototype.enableFormatting = function(e) {
 
   this.format = format = format === null ? '' : format;
 
+  // initialize auto formatting only if there is a valid format
   if (format && format.length) {
     separator = format.match(/[^X]/g);
+    /*
+     * if the formatting direction is 'rtl'; the current separator & format need to be reversed,
+     * to reuse the same logic that is used for formatting 'ltr' direction.
+     */
     if (this.direction === 'rtl') {
       separator = separator.reverse();
       format = format.split('').reverse().join('');
     }
     this.separator = separator;
     this.separatorIndex = separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
-    this.separatorPattern = separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
+    this.separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
 
+    // the legth of the format from the last separator, including the last separator
     this.seperatorIndexIncrementValue = format.length - separatorIndex[separatorIndex.length - 1];
     if (this.limitToMaxLength) {
       targetNode.setAttribute('maxlength', format.length);
@@ -179,15 +212,21 @@ AutoFormatter.prototype.enableFormatting = function(e) {
       this.maxLength = false;
     }
 
-
-    this.formatter = formatter.bind(this, targetNode, separator, separatorIndex, separatorPattern);
+    // maintain the reference of the bounded formatter, so that it can be removed
+    this.formatter = formatter.bind(this);
     targetNode.addEventListener('keyup', this.formatter);
     if(value !== '') {
-      formatter.bind(this)(targetNode, separator, separatorIndex, separatorPattern, e || {});
+      formatter.bind(this)(e || {});
     }
   }
 };
 
+/*
+ * static function to format a given value
+ * this function is similar to the format function above
+ * it does not worry about the complex auto formatting logic
+ * and caretIndex.
+ */
 AutoFormatter.format = function(value, format, limitToMaxLength, recurringPattern, direction) {
   var separator;
   var separatorIndex;
@@ -213,6 +252,15 @@ AutoFormatter.format = function(value, format, limitToMaxLength, recurringPatter
   }
 
   separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
+  /*
+   * if recurringPattern, for example
+   * if the entered input value is 1234567890 and the pattern is XX-XX
+   * the value will be formatted as 12-34-56-78-90; the pattern following the last separator
+   * will be used in recurrance
+   * getSeparatorAndSeparatorIndexForRecurringPattern(), will compute the separator and separatorIndex
+   * from the current value, the lenght of the pattern following the last separator, current separator
+   * and current separatorIndex
+   */
   if (recurringPattern) {
     separatorAndSeparatorIndexForRecurringPattern =
       sepatarorUtility.getSeparatorAndSeparatorIndexForRecurringPattern(
@@ -221,8 +269,9 @@ AutoFormatter.format = function(value, format, limitToMaxLength, recurringPatter
     separator = separatorAndSeparatorIndexForRecurringPattern.separator;
     separatorIndex = separatorAndSeparatorIndexForRecurringPattern.separatorIndex;
   }
-  separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
 
+  // separatorPattern is used to unformat the formatted value
+  separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
   expectedValueArray = unFormat(value, separatorPattern).split('');
 
   for( var i = 0, l = separatorIndex.length; i < l; i += 1 ) {
@@ -231,16 +280,22 @@ AutoFormatter.format = function(value, format, limitToMaxLength, recurringPatter
     }
   }
 
+  // if recurringPattern, the trailing seperator, if any, is removed
   if (recurringPattern &&
     separator.indexOf(expectedValueArray[expectedValueArray.length - 1]) !== -1) {
       expectedValueArray.pop();
   }
 
+  /*
+   * since the value has been reversed for formatting it needs to be re-revesed
+   * before setting it to targetNode
+   */
   if (direction === 'rtl') {
     expectedValueArray.reverse();
   }
 
   if (limitToMaxLength) {
+    // trim the value to maxLength
     return expectedValueArray.slice(0, format.length).join('');
   } else {
     return expectedValueArray.join('');
