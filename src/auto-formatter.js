@@ -35,8 +35,9 @@ function unFormat(value, separatorPattern) {
 }
 
 function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
-  var caretIndex = targetNode.selectionStart;
-  var lastCharTyped = targetNode.value.charAt(caretIndex - 1);
+  var caretIndexFromStart = targetNode.selectionStart;
+  var caretIndexFromEnd = targetNode.value.length - caretIndexFromStart;
+  var lastCharTyped = targetNode.value.charAt(caretIndexFromStart - 1);
   var separatorAndSeparatorIndexForRecurringPattern;
   var expectedValueArray;
   var lastCharTypedIsSeparator;
@@ -63,7 +64,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
    * no format
    * ---------
    * if the keycode is between 8 & 46, backspace, left/right arrow keys etc.
-   * avoid the pain of maintaining the caretIndex when ever formattig is done.
+   * avoid the pain of maintaining the caretIndexFromStart when ever formattig is done.
    * format
    * ------
    * if the last character typed is one of the separator
@@ -85,12 +86,12 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
          * the caret index needs to be updated accordingly, after the formatting
          * which must take, the separator added, in to consideration
          */
-        if(caretIndex >= targetNode.value.length) {
-          caretIndex += 1;
+        if(caretIndexFromStart >= targetNode.value.length) {
+          caretIndexFromStart += 1;
         }
 
-        if(caretIndex === separatorIndex[i] + 1) {
-          caretIndex += 1;
+        if(caretIndexFromStart === separatorIndex[i] + 1) {
+          caretIndexFromStart += 1;
         }
       }
     }
@@ -105,9 +106,13 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
       targetNode.value = expectedValueArray.join('');
     }
 
+    if (this.direction === 'rtl') {
+      caretIndexFromStart = expectedValueArray.length - caretIndexFromEnd;
+    }
+
     if (e.type) {
-        targetNode.selectionStart = caretIndex;
-        targetNode.selectionEnd = caretIndex;
+        targetNode.selectionStart = caretIndexFromStart;
+        targetNode.selectionEnd = caretIndexFromStart;
     }
   }
 }
