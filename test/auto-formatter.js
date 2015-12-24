@@ -147,6 +147,32 @@ describe('AutoFormatter', function() {
         assert.equal(inputNode.value, '(123) 456-7890');
       });
 
+      it('should format recurringly w.r.t the last seperator if desired', function() {
+        autoFormatter.disableFormatting();
+        inputNode.setAttribute('data-format', '(XXX) XXX-XXXX');
+        inputNode.value = '12345678901234567890';
+        autoFormatter = new AutoFormatter(inputNode, false, true);
+        autoFormatter.enableFormatting();
+        event.triggerKeyupEvent(inputNode, 48);
+        assert.equal(inputNode.value, '(123) 456-7890-1234-5678-90');
+
+        autoFormatter.disableFormatting();
+        inputNode.setAttribute('data-format', 'XXXXX-XXXXX');
+        inputNode.value = '1234567890123456789';
+        autoFormatter = new AutoFormatter(inputNode, false, true);
+        autoFormatter.enableFormatting();
+        event.triggerKeyupEvent(inputNode, 48);
+        assert.equal(inputNode.value, '12345-67890-12345-6789');
+
+        autoFormatter.disableFormatting();
+        inputNode.setAttribute('data-format', 'X-XX');
+        inputNode.value = '12345678';
+        autoFormatter = new AutoFormatter(inputNode, false, true);
+        autoFormatter.enableFormatting();
+        event.triggerKeyupEvent(inputNode, 48);
+        assert.equal(inputNode.value, '1-23-45-67-8');
+      });
+
     });
   });
 
@@ -168,8 +194,21 @@ describe('AutoFormatter', function() {
       assert.equal(AutoFormatter.format('1234567890', '(XXX) XXX-XXXX'), '(123) 456-7890');
     });
 
-    it('should format limit the maximum character to the format length', function() {
+    it('should format and limit the maximum character to the format length', function() {
       assert.equal(AutoFormatter.format('12345678901234567890', '(XXX) XXX-XXXX', true), '(123) 456-7890');
+    });
+
+    it('should format recurringly w.r.t the last seperator if desired', function() {
+      assert.equal(AutoFormatter.format('12345678901234567890', '(XXX) XXX-XXXX', false, true), '(123) 456-7890-1234-5678-90');
+      assert.equal(AutoFormatter.format('12345678901234567890', 'XXXXX-XXXXX', false, true), '12345-67890-12345-67890');
+      assert.equal(AutoFormatter.format('123456789012345678', 'XXXXX-XXXXX', false, true), '12345-67890-12345-678');
+      assert.equal(AutoFormatter.format('123456789', 'X-XX', false, true), '1-23-45-67-89');
+    });
+
+    it('should not format recurringly and limit the maximum character to the format length if desired', function() {
+      assert.equal(AutoFormatter.format('12345678901234567890', '(XXX) XXX-XXXX', true, true), '(123) 456-7890');
+      assert.equal(AutoFormatter.format('12345678901234567890', 'XXXXX-XXXXX', true, true), '12345-67890');
+      assert.equal(AutoFormatter.format('123456789', 'X-XX', true, true), '1-23');
     });
 
   });

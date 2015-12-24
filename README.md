@@ -42,8 +42,9 @@ AutoFormatter.format('1234567890', 'XXXXX-XXXXX'); // 12345-67890
  * if limitToMaxLength === true is passed, the `maxlength` attribute,
  * with `length of the format` will be added to the targetNode
  * and formatted value will be trimmed to `length of the format`
+ * if limitToMaxLength is passed as true, recurringPattern will not have any effect
  */
-targetNodeFormatter = new AutoFormatter(targetNode, [limitToMaxLength])
+targetNodeFormatter = new AutoFormatter(targetNode, [limitToMaxLength, recurringPattern])
 
 /*
  * enable formatting on the targetNode
@@ -62,9 +63,17 @@ targetNodeFormatter.disableFormatting();
 /*
  * format a value
  * as per the desired format
+ * if limitToMaxLength is passed as true, recurringPattern will not have any effect
  */
-AutoFormatter.format(value, format, [limitToMaxLength])
+AutoFormatter.format(value, format, [limitToMaxLength, recurringPattern])
 ```
+
+Caveats
+---
+If recurringPattern is in effect, the seperator will be added as soon as the criteria is met.
+For example, lets consider recurringPattern is enabled for `X-XX`, If the user has typed `12`, it will be formatted as `1-2`.
+The moment user types `3`, it will be `1-23-`. Note the `-` at the end.
+
 
 ---
 

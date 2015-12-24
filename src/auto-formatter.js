@@ -34,11 +34,25 @@ function unFormat(value, separatorPattern) {
   return value.replace(separatorPattern, '');
 }
 
-function formatter(targetNode, separator, separatorIndex, separatorPattern, maxLength, e) {
+function formatter(targetNode, separator, separatorIndex, separatorPattern, e) {
   var caretIndex = targetNode.selectionStart;
   var lastCharTyped = targetNode.value.charAt(caretIndex - 1);
-  var lastCharTypedIsSeparator = separator.indexOf(lastCharTyped) !== -1 ? 1 : 0;
-  var expectedValueArray = unFormat(targetNode.value, separatorPattern).split('');
+  var separatorAndSeparatorIndexForRecurringPattern;
+  var expectedValueArray;
+  var lastCharTypedIsSeparator;
+
+  if (this.recurringPattern) {
+    separatorAndSeparatorIndexForRecurringPattern =
+      sepatarorUtility.getSeparatorAndSeparatorIndexForRecurringPattern(
+        targetNode.value, this.seperatorIndexIncrementValue, separator, separatorIndex
+      );
+    separator = separatorAndSeparatorIndexForRecurringPattern.separator;
+    separatorIndex = separatorAndSeparatorIndexForRecurringPattern.separatorIndex;
+  }
+  lastCharTypedIsSeparator = separator.indexOf(lastCharTyped) !== -1 ? 1 : 0;
+
+  separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
+  expectedValueArray = unFormat(targetNode.value, separatorPattern).split('');
 
   /*
    * no format
@@ -48,7 +62,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
    * format
    * ------
    * if the last character typed is one of the separator
-   * so that the seperator is not typed over and over
+   * so that the separator is not typed over and over
    */
   if( (lastCharTypedIsSeparator && !isModifierKey(e) ) || isAutoFormatEnabled(e) ) {
     for( var i = 0, l = separatorIndex.length; i < l; i += 1 ) {
@@ -77,7 +91,7 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
     }
 
     if (this.limitToMaxLength) {
-      targetNode.value = expectedValueArray.slice(0, maxLength).join('');
+      targetNode.value = expectedValueArray.slice(0, this.maxLength).join('');
     } else {
       targetNode.value = expectedValueArray.join('');
     }
@@ -88,9 +102,10 @@ function formatter(targetNode, separator, separatorIndex, separatorPattern, maxL
   }
 }
 
-var AutoFormatter = function(targetNode, limitToMaxLength) {
+var AutoFormatter = function(targetNode, limitToMaxLength, recurringPattern) {
   this.targetNode = targetNode;
   this.limitToMaxLength = limitToMaxLength;
+  this.recurringPattern = recurringPattern && !limitToMaxLength;
 };
 
 AutoFormatter.prototype.disableFormatting = function() {
@@ -129,23 +144,30 @@ AutoFormatter.prototype.enableFormatting = function(e) {
     this.separatorIndex = separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
     this.separatorPattern = separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
 
+    this.seperatorIndexIncrementValue = format.length - separatorIndex[separatorIndex.length - 1];
     if (this.limitToMaxLength) {
       targetNode.setAttribute('maxlength', format.length);
+      this.maxLength = format.length;
+    } else {
+      targetNode.removeAttribute('maxlength', format.length);
+      this.maxLength = false;
     }
 
-    this.formatter = formatter.bind(this, targetNode, separator, separatorIndex, separatorPattern, format.length);
+    this.formatter = formatter.bind(this, targetNode, separator, separatorIndex, separatorPattern);
     targetNode.addEventListener('keyup', this.formatter);
     if(value !== '') {
-      formatter.bind(this)(targetNode, separator, separatorIndex, separatorPattern, format.length, e || {});
+      formatter.bind(this)(targetNode, separator, separatorIndex, separatorPattern, e || {});
     }
   }
 };
 
-AutoFormatter.format = function(value, format, limitToMaxLength) {
+AutoFormatter.format = function(value, format, limitToMaxLength, recurringPattern) {
   var separator;
   var separatorIndex;
   var separatorPattern;
   var expectedValueArray;
+  var separatorAndSeparatorIndexForRecurringPattern;
+  recurringPattern = recurringPattern && !limitToMaxLength;
 
   if (!value) {
     return value;
@@ -157,6 +179,14 @@ AutoFormatter.format = function(value, format, limitToMaxLength) {
 
   separator = format.match(/[^X]/g);
   separatorIndex = sepatarorUtility.getSepatarorIndex(separator, format);
+  if (recurringPattern) {
+    separatorAndSeparatorIndexForRecurringPattern =
+      sepatarorUtility.getSeparatorAndSeparatorIndexForRecurringPattern(
+        value, format.length - separatorIndex[separatorIndex.length - 1], separator, separatorIndex
+      );
+    separator = separatorAndSeparatorIndexForRecurringPattern.separator;
+    separatorIndex = separatorAndSeparatorIndexForRecurringPattern.separatorIndex;
+  }
   separatorPattern = sepatarorUtility.getSepatarorPattern(separator);
 
   expectedValueArray = unFormat(value, separatorPattern).split('');

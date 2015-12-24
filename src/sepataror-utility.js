@@ -33,7 +33,29 @@ function getSepatarorPattern(separator) {
   return new RegExp(separatorPattern, 'g');
 }
 
+function getSeparatorAndSeparatorIndexForRecurringPattern(value, seperatorIndexIncrementValue, separator, separatorIndex) {
+  var expectedValueLength = value.length + separator.length;
+  var lastSeperatorIndex = separatorIndex.length - 1;
+
+  while(separatorIndex[lastSeperatorIndex] < expectedValueLength - seperatorIndexIncrementValue) {
+    separatorIndex.push(
+      separatorIndex[lastSeperatorIndex] +
+      seperatorIndexIncrementValue
+    );
+    separator.push(separator[separator.length - 1]);
+    //separator.unshift(separator[0]);
+    expectedValueLength += 1;
+    lastSeperatorIndex = separatorIndex.length - 1;
+  }
+
+  return {
+    separator: separator,
+    separatorIndex: separatorIndex
+  };
+}
+
 module.exports = {
   getSepatarorIndex: getSepatarorIndex,
-  getSepatarorPattern: getSepatarorPattern
+  getSepatarorPattern: getSepatarorPattern,
+  getSeparatorAndSeparatorIndexForRecurringPattern: getSeparatorAndSeparatorIndexForRecurringPattern
 };

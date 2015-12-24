@@ -23,3 +23,8 @@ creditCardFormatter.enableFormatting();
 
 birthdayFormatter = new AutoFormatter(document.getElementById('birthday'), true);
 birthdayFormatter.enableFormatting();
+
+/*
+ * ToDo
+ * add example for recurringPattern
+ */
