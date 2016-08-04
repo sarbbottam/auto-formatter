@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Index</title>
+    <link rel="stylesheet" href="main.css">
+  </head>
+  <body>
+    <div id="main" class="container p-b-40px">
+      <div class="banner text-xl">
+        Auto Formatter: format as you type
+      </div>
+      <div class="row">
+        <div class="col col-1-3 col-md-1-3 col-sm-1-3">
+          <select class="drop-down" id="country-code" data-corresponding-node-id="phone-number">
+            <option value="880"> Bangladesh (+880) </option>
+            <option data-format="X XX XX XX XX" value="33"> France (+33) </option>
+            <option data-format="XXXXX-XXXXX" value="91"> India (+91) </option>
+            <option data-format="(XXX) XXX-XXXX" value="1" selected> United States (+1) </option>
+          </select>
+          <input type="text" id="phone-number" class="input-field" placeholder="(XXX) XXX-XXXX" data-format="(XXX) XXX-XXXX">
+          <p class="call-out">
+            Choose a different country code to update the format.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-1-3 col-md-1-3 col-sm-1-3">
+          <input type="text" id="credit-card" class="input-field" placeholder="XXXX XXXX XXXX XXXX" data-format="XXXX XXXX XXXX XXXX">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-1-3 col-md-1-3 col-sm-1-3">
+          <input type="text" id="birthday" class="input-field" placeholder="YYYY/MM/DD" data-format="XXXX/XX/XX">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-1-3 col-md-1-3 col-sm-1-3">
+          <input type="text" id="currency" class="input-field" placeholder="XXX.XX" data-format="XXX,XXX.XX" style="text-align:right">
+        </div>
+      </div>
+      <div class="text-sm p-f footer">
+        Developed with &#x2661; and
+        <a href="https://github.com/sarbbottam/sheer" class="link">Sheer</a>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
