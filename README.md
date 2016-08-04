@@ -2,7 +2,7 @@ auto-formatter
 ---
 
 
-[![build status](https://travis-ci.org/sarbbottam/auto-formatter.svg?branch=master.svg?branch=master)](https://travis-ci.org/sarbbottam/auto-formatter.svg?branch=master/)
+[![build status](https://travis-ci.org/sarbbottam/auto-formatter.svg?branch=master)](https://travis-ci.org/sarbbottam/auto-formatter)
 [![coverage status](https://coveralls.io/repos/sarbbottam/auto-formatter/badge.svg?branch=master&service=github)](https://coveralls.io/github/sarbbottam/auto-formatter?branch=master)
 [![sauce test status](https://saucelabs.com/buildstatus/sarbbottam)](https://saucelabs.com/u/sarbbottam)
 
