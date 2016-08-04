@@ -6,7 +6,10 @@ var birthdayFormatter;
 
 var countryCodeNode = document.getElementById('country-code');
 
-phoneNumberFormatter = new AutoFormatter(document.getElementById('phone-number'), true);
+phoneNumberFormatter = new AutoFormatter({
+  targetNode: document.getElementById('phone-number'),
+  limitToMaxLength: true
+});
 phoneNumberFormatter.enableFormatting();
 
 countryCodeNode.addEventListener('change', function() {
@@ -18,16 +21,22 @@ countryCodeNode.addEventListener('change', function() {
 });
 
 
-creditCardFormatter = new AutoFormatter(document.getElementById('credit-card'), true);
+creditCardFormatter = new AutoFormatter({
+  targetNode: document.getElementById('credit-card'),
+  limitToMaxLength: true
+});
 creditCardFormatter.enableFormatting();
 
-birthdayFormatter = new AutoFormatter(document.getElementById('birthday'), true);
+birthdayFormatter = new AutoFormatter({
+  targetNode: document.getElementById('birthday'),
+  limitToMaxLength: true
+});
 birthdayFormatter.enableFormatting();
 
-currencyFormatter = new AutoFormatter(document.getElementById('currency'), false, true, 'rtl');
+currencyFormatter = new AutoFormatter({
+  targetNode: document.getElementById('currency'),
+  limitToMaxLength: false,
+  recurringPattern: true,
+  direction: 'rtl'
+});
 currencyFormatter.enableFormatting();
-
-/*
- * ToDo
- * add example for recurringPattern
- */
